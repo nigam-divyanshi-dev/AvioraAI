@@ -1,11 +1,12 @@
 import { getAuth } from "firebase-admin/auth"
 import { app } from "../config/firebase.js"
-
+import User from "../models/user.model.js"
+import crypto from "crypto"
 export const login = async (req, res) => {
     try {
         const {token} = req.body
         const decoded =await getAuth(app).verifyIdToken(token)
-        const user = await User.findOne({ 
+        let user = await User.findOne({ 
             firebaseUid: decoded.uid 
         })
 
