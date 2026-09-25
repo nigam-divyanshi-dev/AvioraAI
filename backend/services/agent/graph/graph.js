@@ -37,5 +37,19 @@ workflow.addConditionalEdges("router", (state) => {
       break;
   }
 },{
-
+  chat: "chat",
+  search: "search",
+  coding: "coding",
+  pdf: "pdf",
+  ppt: "ppt",
+  vision: "vision"
 })
+
+workflow.addEdge("search", "chat");
+workflow.addEdge("chat", "__end__");
+workflow.addEdge("coding", "__end__");
+workflow.addEdge("pdf", "__end__");
+workflow.addEdge("ppt", "__end__");
+workflow.addEdge("vision", "__end__");
+
+export const graph = workflow.compile()
