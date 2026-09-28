@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux'
+import MessageBubble from "./MessageBubble"
 
 function MessageList() {
   const { selectedConversation } = useSelector(state => state.conversation)
@@ -32,9 +33,15 @@ function MessageList() {
         </div>
       ):
 
+
       <div>
-        
+      {messages?.map((msg, i) => (
+      <div key={i}>
+      <MessageBubble role={msg?.role} content={msg?.content} />
       </div>
+      ))}
+      </div>
+
 
       }
     </div>
