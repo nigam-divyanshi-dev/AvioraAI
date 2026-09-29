@@ -1,5 +1,5 @@
 import Conversation from "../models/conversation.model.js";
-//
+import Message from "../models/message.model.js";
 export const createConversation = async (req, res) => {
   try {
     const userId = req.headers["x-user-id"];
@@ -63,7 +63,7 @@ export const getMessages = async (req, res) => {
 
     const messages = await Message.find({
       conversationId:req.params.conversationId
-    }).sort({ createdAt: -1 })
+    })
     return res.status(200).json(messages)
   } catch (error) {
     return res.status(500).json({ message: `get messages error ${error}` })
