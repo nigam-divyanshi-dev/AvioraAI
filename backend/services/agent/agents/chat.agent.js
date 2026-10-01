@@ -1,11 +1,25 @@
 import { getModel } from "../config/llmModels.js";
 import { getMemory } from "../config/memory.js";
 import { SystemMessage, HumanMessage, AIMessage } from "@langchain/core/messages";
+
 export const chatAgent = async (state) => {
     const llm = await getModel("chat");
 
+    const history = await getMemory(state.conversationId);
+    
+    const searchContext=state.searchResults?`
+    Web Search Results:
+    ${JSON.stringify(state.searchResults)}
+    Answer the user using only the above search results.
+    `:""
+
     const systemPrompt = `
-    You are CortexAI, an intelligent AI assistant.
+    You are AvioraAI, an intelligent AI assistant.
+
+    ${searchContext}
+    If searchContext exists:
+    - Use search results to answer.
+    - Do not mention internal tools.
 
     Rules:
     - For simple questions, greetings, and short queries, respond naturally in plain text.
@@ -21,7 +35,6 @@ export const chatAgent = async (state) => {
     - Never write headings and content on the same line.
     - Never generate large walls of text.
     `
-    const history = await getMemory(state.conversationId);
     
     const messages=[
         new SystemMessage(systemPrompt),
@@ -29,6 +42,7 @@ export const chatAgent = async (state) => {
     ]
 
     //using langchain to send the messages to llm and get the response. 
+    
     history.forEach((msg) => {
         if (msg.role === "user") {
             messages.push(new HumanMessage(msg.content))  
@@ -39,8 +53,6 @@ export const chatAgent = async (state) => {
     });
 
     messages.push(new HumanMessage(state.prompt));
-    
-console.log(messages)
 
     const response = await llm.invoke(messages)
         
