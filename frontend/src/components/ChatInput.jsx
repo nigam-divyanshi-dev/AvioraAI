@@ -3,6 +3,11 @@ import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import sendMessage from "../features/sendMessage"
 import { addMessage } from "../redux/messageSlice"
+import { createConversation } from "../features/createConversation"
+import { setSelectedConversation } from "../redux/conversationSlice"
+import { addConversation } from "../redux/conversationSlice"
+import { updateConversation } from "../features/updateConversation"
+import { setConvTitle } from "../redux/conversationSlice"
 
 function ChatInput() {
 
@@ -13,11 +18,29 @@ function ChatInput() {
   const { messages } = useSelector(state => state.message)
 
   const dispatch = useDispatch()
+
   const handleSendMessage = async () => {
+
+    let conversation=selectedConversation
+
+    if(!conversation) {
+      const conv=await createConversation()
+      dispatch(setSelectedConversation(conv))
+      dispatch(addConversation(conv))
+      conversation=conv
+    }
+
+    if(conversation.title=="New Chat"){
+      await updateConversation({id:conversation?._id, title:value.trim()})
+      dispatch(setConvTitle({conversationId:conversation?._id, title:value.slice(0,40)}))
+      
+    }
+
       const payload = {
           prompt: value.trim(),
-          conversationId: selectedConversation?._id
+          conversationId: conversation?._id
       }
+
       dispatch(addMessage({role:"user",content:value.trim()}))
       setValue("")
       const data = await sendMessage(payload)
