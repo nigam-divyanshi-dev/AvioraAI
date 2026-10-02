@@ -13,11 +13,15 @@ function ChatInput() {
 
   const [value,setValue] = useState("")
   const [selectedAgent, setSelectedAgent] = useState("Auto")
+  const [isSending, setIsSending] = useState(false)
   const { selectedConversation } = useSelector(state => state.conversation)
   const { messages } = useSelector(state => state.message)
   const dispatch = useDispatch()
   const handleSendMessage = async () => {
-
+    if (isSending || !value.trim()) return
+    setIsSending(true)
+    
+try {
     let conversation=selectedConversation
 
     if(!conversation) {
@@ -41,9 +45,11 @@ function ChatInput() {
       dispatch(addMessage({role:"user",content:value.trim()}))
       setValue("")
       const data = await sendMessage(payload)
-      dispatch(addMessage({role:"assistant",content:data.answer, images:data.images}))
+      dispatch(addMessage({role:"assistant",content:data?.answer, images:data?.images}))
       console.log(data)
-  }
+  }finally {
+    setIsSending(false)
+  }}
 
 const agents =[
   {
@@ -147,7 +153,7 @@ const agents =[
             </button>
           </div>
           <button 
-          disabled={!value.trim()}
+          disabled={!value.trim() || isSending}
           onClick={handleSendMessage}
           className={`flex items-center justify-center w-8 h-8 rounded-lg border-none cursor-pointer transition-all duration-150 ${value.trim() ? "bg-linear-to-br from-indigo-500 to-violet-700 hover:opacity-90 text-white" : "bg-white/[0.05] text-slate-600 cursor-not-allowed"}`}>
             <Send size={15}/>
