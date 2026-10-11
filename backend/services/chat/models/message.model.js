@@ -10,7 +10,8 @@ const fileSchema = new mongoose.Schema({
 const artifactSchema = new mongoose.Schema({
   id:Number,
   type:String,
-  files:[fileSchema]
+  files:[fileSchema],
+  title: String
 },{
   _id:false
 })

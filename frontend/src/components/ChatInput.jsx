@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import sendMessage from "../features/sendMessage"
-import { addMessage } from "../redux/messageSlice"
+import { addMessage, setArtifacts } from "../redux/messageSlice"
 import { createConversation } from "../features/createConversation"
 import { setSelectedConversation } from "../redux/conversationSlice"
 import { addConversation } from "../redux/conversationSlice"
@@ -45,6 +45,7 @@ try {
       dispatch(addMessage({role:"user",content:value.trim()}))
       setValue("")
       const data = await sendMessage(payload)
+      dispatch(setArtifacts(data.artifacts || [] ))
       dispatch(addMessage({role:"assistant",content:data?.answer, images:data?.images}))
       console.log(data)
   }finally {
