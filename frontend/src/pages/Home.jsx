@@ -49,7 +49,8 @@ function Home() {
             </p>
           </div>
 
-          <button className="w-full flex items-center justify-center gap-3 py-[11px] rounded-xl text-sm font-medium text-black/90 bg-white hover:bg-gray-200 transition-all duration-150 cursor-pointer" onClick={googleLogin}>
+          <button className="w-full flex items-center justify-center gap-3 py-[11px] rounded-xl text-sm font-medium text-black/90 bg-white hover:bg-gray-200 transition-all duration-150 cursor-pointer" 
+          onClick={googleLogin}>
             <FcGoogle size={15} />
             Continue With Google
           </button>
