@@ -84,7 +84,9 @@ export const codingAgent=async (state) => {
   
     `
     const res= await llm.invoke(prompt)
-    const data = JSON .parse(res.content)
+    const raw = res.content;
+const clean = raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1);
+const data = JSON.parse(clean);
     return {
       ...state,
       aiResponse : "Code Generated Succesfully",
