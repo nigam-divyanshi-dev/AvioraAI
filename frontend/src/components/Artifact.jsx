@@ -1,10 +1,4 @@
-import {
-  PanelRightClose,
-  PanelRightOpen,
-  Code2,
-  Copy,
-  Eye,
-} from "lucide-react";
+import {PanelRightClose,PanelRightOpen,Code2,Copy,Eye,Check,} from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { easeInOut, motion } from "motion/react";
@@ -15,6 +9,7 @@ function Artifact() {
   const { artifacts } = useSelector((state) => state.message);
   const [tab, setTab] = useState("code");
   const [activeFile, setActiveFile] = useState(0);
+  const [copied,setCopied] = useState(false)
 
   if (artifacts.length == 0) return;
 
@@ -43,7 +38,14 @@ ${htmlFile?.content || ""}
 </script>
 </body>
 </html>
-`;
+`
+const handleCopy = async() => {
+    await navigator.clipboard.writeText(file?.content || "");
+    setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2000);
+  };
 
   const detectLanguage = (fileName = "") => {
     const name = fileName.toLowerCase();
@@ -92,8 +94,10 @@ ${htmlFile?.content || ""}
             </div>
 
             <div className="flex items-center gap-1 shrink-0">
-              <button className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-200 hover:bg-white/[0.05] rounded-lg transition-colors duration-150 bg-transparent border-none cursor-pointer">
-                <Copy size={15} />
+              <button 
+              onClick={handleCopy}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 text-[11px] font-medium text-slate-400 hover:text-slate-200 hover:bg-white/[0.05] rounded-lg transition-colors duration-150 bg-transparent border-none cursor-pointer">
+                {copied?<Check size = {15}/>:<Copy size={15} />}
               </button>
             </div>
 
