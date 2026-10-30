@@ -1,4 +1,4 @@
-import {PanelRightClose,PanelRightOpen,Code2,Copy,Eye,Check,} from "lucide-react";
+import { PanelRightClose,PanelRightOpen,Code2,Copy,Eye,Check } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { easeInOut, motion } from "motion/react";
@@ -39,7 +39,7 @@ ${htmlFile?.content || ""}
 </body>
 </html>
 `
-const handleCopy = async() => {
+  const handleCopy = async() => {
     await navigator.clipboard.writeText(file?.content || "");
     setCopied(true);
     setTimeout(() => {
