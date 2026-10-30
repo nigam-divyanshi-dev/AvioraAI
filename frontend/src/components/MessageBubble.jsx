@@ -139,6 +139,18 @@ function MessageBubble({ role, content, images }) {
                 </div>
               );
             },
+            img: ({ src }) => {
+  if (!src) return null;
+  return (
+    <img
+      src={src}
+      onClick={() => setLightBox(src)}
+      loading="lazy"
+      onError={(e) => e.currentTarget.remove()}
+      className="w-40 h-28 rounded-xl object-cover border border-white/10 cursor-zoom-in hover:opacity-90 transition"
+    />
+  );
+},
             pre: ({ children }) => <>{children}</>,
             a: ({ children, href }) => (
               <a
@@ -163,14 +175,7 @@ function MessageBubble({ role, content, images }) {
               <strong className="font-semibold text-white">{children}</strong>
             ),
             hr: () => <hr className="border-white/10 my-4" />,
-            img: ({ node, ...props }) => (
-              <img
-                {...props}
-                loading="lazy"
-                className="max-w-[200px] max-h-[150px] rounded-lg object-cover my-2"
-                onError={(e) => e.currentTarget.remove()}
-              />
-            ),
+            
           }}
         >
           {content}

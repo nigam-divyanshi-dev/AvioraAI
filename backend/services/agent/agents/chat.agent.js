@@ -3,7 +3,8 @@ import { getMemory } from "../config/memory.js";
 import { SystemMessage, HumanMessage, AIMessage } from "@langchain/core/messages";
 
 export const chatAgent = async (state) => {
-    const llm = await getModel("chat");
+    try{
+        const llm = await getModel("chat");
 
     const history = await getMemory(state.conversationId);
     
@@ -60,4 +61,12 @@ export const chatAgent = async (state) => {
         ...state,
         aiResponse: response.content
     };
+
+    }catch (error){
+        return {
+        ...state,
+        aiResponse: "❌ Failed to generate Response."
+    };
+    }
+    
 };
