@@ -13,7 +13,7 @@ Intent-aware routing to specialized agents for **Chat, Search, Code, PDF, PPT an
 ![Redis](https://img.shields.io/badge/Redis-Docker-DC382D?logo=redis&logoColor=white)
 ![Status](https://img.shields.io/badge/status-active%20development-orange)
 
-[Repository](https://github.com/RythemSood1709/Intesa_AI) · [Report a Bug](https://github.com/nigam-divyanshi-dev/AvioraAI/issues) · [Request a Feature](https://github.com/nigam-divyanshi-dev/AvioraAI/issues)
+[Repository](https://github.com/nigam-divyanshi-dev/AvioraAI) · [Report a Bug](https://github.com/nigam-divyanshi-dev/AvioraAI/issues) · [Request a Feature](https://github.com/nigam-divyanshi-dev/AvioraAI/issues)
 
 </div>
 
