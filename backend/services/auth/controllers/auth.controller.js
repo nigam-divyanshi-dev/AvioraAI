@@ -23,6 +23,12 @@ export const login = async (req, res) => {
 
     const sessionId = crypto.randomUUID();
     await redis.set(
+      `user-session-${user?._id}`,
+      sessionId,
+      "EX",
+      60 * 60 * 24 * 7,
+    );
+    await redis.set(
       `session-${sessionId}`,
       JSON.stringify({
         userId: user._id,
@@ -75,7 +81,8 @@ export const updateUserPayment = async (req, res) => {
     user.planExpiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
     await user.save();
 
-    const sessionId = req.cookies?.session;
+    const sessionId = await redis.get(`user-session-${user?._id}`);
+    console.log("sessionId", sessionId);
     await redis.set(
       `session-${sessionId}`,
       JSON.stringify({

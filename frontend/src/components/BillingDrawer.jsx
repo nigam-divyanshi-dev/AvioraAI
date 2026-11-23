@@ -102,9 +102,6 @@ function BillingDrawer({ open, onClose }) {
                   </div>
                 </div>
               </div>
-            </div>
-
-            <div className="px-5 flex-1 overflow-auto space-y-4">
               <div className="rounded-xl border border-white/10 p-4">
                 <h3 className="text-white font-semibold">Starter Plan</h3>
                 <p className="text-indigo-400 text-2xl font-bold mt-2">₹199</p>
