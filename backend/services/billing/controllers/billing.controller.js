@@ -42,7 +42,7 @@ export const createOrder = async (req, res) => {
 // IDBCursor interface returns an IDBRequest object : update() method used 
 // digest function 
 
-export const verifyPayment = async () => {
+export const verifyPayment = async (req, res) => {
     try {
         const {razorpay_order_id, razorpay_payment_id,razorpay_signature} = req.body
 
