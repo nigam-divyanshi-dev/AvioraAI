@@ -1,12 +1,40 @@
-//multer frontend se pdf ya image lekar ayega aur temp folder ke andar rakh dega, fir agent ke andar se usko read karke process karega
+// Multer takes the PDF or image sent from the frontend and saves it in the temp folder.
+// Then the agent reads that file from the temp folder and processes it.
+// Multer is middleware.
+// Multer creates a file object on the request, and the file is then accessed through its key (e.g. req.file).
 
-import fs from "fs"
-import path from "path"
-import multer from "multer"
+import fs from "fs";
+import path from "path";
+import multer from "multer";
 
-const uploadDir=path.resolve("./temp")
+const uploadDir = path.resolve("./temp");
 
-if(!fs.existsSync(uploadDir)){
-    fs.mkdirSync(uploadDir,{recursive:true})
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename(req, file, cb) {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+    if(file.mimetype=="application/pdf" ||
+        file.mimetype.startsWith("image/")
+    ){
+
+        cb(null,true)
+
+    }else{
+        cb(new Error("Only PDF and Images are allowed."))
+    }
+}
+export default multer({
+  storage,fileFilter,limits: {
+    fileSize: 20 * 1024 * 1024,
+  },
+});
