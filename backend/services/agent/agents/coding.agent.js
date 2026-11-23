@@ -4,7 +4,7 @@
 //deep seek model used 
 
 import { getModel } from "../config/llmModels.js"
-
+import { deductCredits } from "../utils/deductCredits.js"
 export const codingAgent=async (state) => {
   const intentLlm=await getModel("intent")
   const llm = await getModel("coding")
@@ -87,7 +87,9 @@ export const codingAgent=async (state) => {
     const raw = res.content;
 const clean = raw.slice(raw.indexOf("{"), raw.lastIndexOf("}") + 1);
 const data = JSON.parse(clean);
-    return {
+await deductCredits(state.userId,"coding")
+    
+return {
       ...state,
       aiResponse : "Code Generated Succesfully",
       artifacts : [
@@ -130,6 +132,7 @@ const data = JSON.parse(clean);
   ${state.prompt}
   `)
    const data = res.content
+   await deductCredits(state.userId,"coding")
    return {
     ...state,
     aiResponse: data,
