@@ -7,6 +7,7 @@ export const router = async (state) => {
       agent: state.agent,
     };
   }
+  console.log("file in router",state.file.mimetype);
 
   if (state.file.mimetype === "application/pdf") {
     return {
@@ -15,7 +16,7 @@ export const router = async (state) => {
     };
   }
 
-  if (state.file.mimetype.startsWith === "image/") {
+  if (state.file.mimetype.startsWith("image/")) {
     return {
       ...state,
       agent: "imageAnalyzer",

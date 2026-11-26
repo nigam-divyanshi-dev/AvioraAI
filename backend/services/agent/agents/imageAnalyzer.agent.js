@@ -6,13 +6,13 @@
 import { HumanMessage, SystemMessage } from "@langchain/core/messages"
 import { getModel } from "../config/llmModels.js"
 import fs from "fs/promises"
-
+import { deductCredits } from "../utils/deductCredits.js"
 export const imageAnalyzer=async (state)=>{
 try {
     const llm=await getModel("imageAnalyzer")
 
     const imageBuffer=await fs.readFile(state.file.path)
-    const base64image=imageBuffer.toString("base64")
+    const base64Image=imageBuffer.toString("base64")
 
     const messages=[
         new SystemMessage(
@@ -39,15 +39,17 @@ Rules:
                     {
                         type:"image_url",
                         image_url:{
-                            url:`data:${state.file.mimetype};base64,${base64image}`,
+                            url:`data:${state.file.mimetype};base64,${base64Image}`,
                         }  
                     }
                 ]
             }
         )
     ]
-
+console.log("image agent start")
 const response = await llm.invoke(messages)
+console.log("image agent end")
+await deductCredits(state.userId,"vision")
 return {
     ...state,
     aiResponse:response.content
@@ -61,6 +63,6 @@ return {
     }
 
 } finally {
-    fs.unlink(state.file.path)
+    await fs.unlink(state.file.path)
 }
 }

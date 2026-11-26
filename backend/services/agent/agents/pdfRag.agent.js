@@ -1,1 +1,76 @@
-export const pdfRag=(state)=>{}
+//text parser package installed and used for pdf and docx files
+//text splitter package installed and used for splitting the text into chunks for vector db storage
+
+import fs from "fs";
+import { PDFParse } from "pdf-parse";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { vectorStore } from "../config/vectorDb.js";
+import { getModel } from "../config/llmModels.js";
+import { SystemMessage, HumanMessage } from "@langchain/core/messages";
+import { deductCredits } from "../utils/deductCredits.js";
+
+export const pdfRag = async (state) => {
+  try {
+    const buffer = fs.readFileSync(state.file.path);
+    const pdf = new PDFParse({
+      data: buffer,
+    });
+
+    const result =await  pdf.getText();
+    const text = result.text;
+
+    const spilliter = new RecursiveCharacterTextSplitter({
+      chunkSize: 1000,
+      chunkOverlap: 200,
+    });
+
+    const docs = await spilliter.createDocuments([text]);
+    const collectionName = `pdf-${Date.now()}`;
+    const store = await vectorStore(docs, collectionName);
+
+    const relevantDocs = await store.similaritySearch(state.prompt, 5);
+
+    const context = relevantDocs.map((d) => d.pageContent).join("\n\n");
+
+    const llm = await getModel("pdf-rag");
+
+    const messages = [
+      new SystemMessage(`You are AvioraAI PDF Assistant.
+
+Rules:
+
+- Answer ONLY from the uploaded PDF.
+
+- Never make up information.
+
+- If the answer is not present in the PDF, reply:
+
+"I couldn't find this information in the uploaded PDF."
+
+- Use Markdown formatting. Never use HTML tags such as <br> or <p>.
+`),
+      new HumanMessage(`
+    Context:${context}
+    Question:${state.prompt}
+    `),
+    ];
+
+    const response = await llm.invoke(messages);
+    await deductCredits(state.userId, "pdf");
+    console.log("response from pdfRag", response);
+    return {
+      ...state,
+      aiResponse: response.content,
+    };
+   
+    
+  } catch (error) {
+    console.log(error);
+    return {
+      ...state,
+      aiResponse: "Failed to Analyze pdf",
+    };
+  } finally {
+    fs.unlinkSync(state.file.path);
+  }
+};
