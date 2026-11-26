@@ -11,11 +11,17 @@ export const chatAgent = async (state) => {
 
     const history = await getMemory(state.conversationId);
     
-    const searchContext=state.searchResults?`
+    const searchContext = state.searchResults?.results
+  ? `
     Web Search Results:
-    ${JSON.stringify(state.searchResults)}
+    ${state.searchResults.results
+      .slice(0, 5)
+      .map((r, i) => `[${i + 1}] ${r.title}\n${r.url}\n${(r.content || "").slice(0, 500)}`)
+      .join("\n\n")}
+
     Answer the user using only the above search results.
-    `:""
+    `
+  : ""
 
     const systemPrompt = `
     You are AvioraAI, an intelligent AI assistant.
@@ -67,6 +73,8 @@ export const chatAgent = async (state) => {
     };
 
     }catch (error){
+            console.log("chat agent error:", error)
+
         return {
         ...state,
         aiResponse: "❌ Failed to generate Response."

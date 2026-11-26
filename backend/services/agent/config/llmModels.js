@@ -8,9 +8,9 @@ const groq = new ChatGroq({
 })
 
 const gemini = new ChatGoogleGenerativeAI({
-    model: "gemini-3.8-flash",
+    model: "gemini-3.6-flash",
     apiKey: process.env.GOOGLE_API_KEY,
-    maxRetries: 3,
+    maxRetries: 1,
     timeout: 30000
 })
 

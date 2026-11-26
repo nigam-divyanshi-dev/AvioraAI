@@ -1,26 +1,19 @@
 import { getModel } from "../config/llmModels.js";
 
 export const router = async (state) => {
+  const mime = state.file?.mimetype;
+  console.log("file in router", mime);
+
+  if (mime === "application/pdf") {
+    return { ...state, agent: "pdfRag" };
+  }
+
+  if (mime?.startsWith("image/")) {
+    return { ...state, agent: "imageAnalyzer" };
+  }
+
   if (state.agent && state.agent !== "auto") {
-    return {
-      ...state,
-      agent: state.agent,
-    };
-  }
-  console.log("file in router",state.file.mimetype);
-
-  if (state.file.mimetype === "application/pdf") {
-    return {
-      ...state,
-      agent: "pdfRag",
-    };
-  }
-
-  if (state.file.mimetype.startsWith("image/")) {
-    return {
-      ...state,
-      agent: "imageAnalyzer",
-    };
+    return { ...state, agent: state.agent };
   }
 
   const llm = await getModel("router");
@@ -82,9 +75,11 @@ User Query:
 ${state.prompt}`;
 
   const response = await llm.invoke(prompt);
+  const agent = response.content.trim().toLowerCase();
+  const valid = ["chat", "search", "coding", "pdf", "ppt", "vision"];
 
   return {
     ...state,
-    agent: response.content.trim().toLowerCase(),
+    agent: valid.includes(agent) ? agent : "chat",
   };
 };
