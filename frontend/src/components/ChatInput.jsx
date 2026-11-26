@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import sendMessage from "../features/sendMessage";
-import { addMessage, setArtifacts } from "../redux/messageSlice";
+import { addMessage, setArtifacts,setIsLoading } from "../redux/messageSlice";
 import { createConversation } from "../features/createConversation";
 import { setSelectedConversation } from "../redux/conversationSlice";
 import { addConversation } from "../redux/conversationSlice";
@@ -34,6 +34,7 @@ function ChatInput() {
   const dispatch = useDispatch();
 
   const handleSendMessage = async () => {
+    dispatch(setIsLoading(true));
     if (isSending || !value.trim()) return;
     setIsSending(true);
 
@@ -65,11 +66,15 @@ function ChatInput() {
       formData.append("prompt", value.trim());
       formData.append("conversationId", conversation?._id);
       formData.append("agent", selectedAgent.toLowerCase());
-      if (selectedFile) formData.append("file", selectedFile);
-
+      if (selectedFile) {
+        formData.append("file", selectedFile);
+      };
+      
       dispatch(addMessage({ role: "user", content: value.trim() }));
       setValue("");
       const data = await sendMessage(formData);
+      dispatch(setIsLoading(false));
+
       if (!data) return;
       setSelectedFile(null);
       dispatch(setArtifacts(data.artifacts || []));

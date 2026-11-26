@@ -42,7 +42,7 @@ workflow.addConditionalEdges("router", (state) => {
     case "imageAnalyzer": 
       return "imageAnalyzer";
     default:
-      break;
+      return "chat";
   }
 },{
   chat: "chat",
